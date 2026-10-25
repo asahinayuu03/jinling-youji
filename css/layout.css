@@ -1,0 +1,166 @@
+/* ============================================================
+   金陵有迹 — 布局样式
+   本文件负责：顶部导航、首屏 Hero、各 Section、页脚
+   ============================================================ */
+
+/* ---------- 顶部导航 ---------- */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-2) var(--sp-4);
+  background: rgba(246, 241, 231, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+
+.nav__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  color: var(--ink);
+  letter-spacing: 0.1em;
+  margin-right: auto;
+}
+
+.nav__brand-mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  background: var(--vermillion);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 1rem;
+  letter-spacing: 0;
+}
+
+.nav__links {
+  display: flex;
+  gap: var(--sp-3);
+  font-size: 0.95rem;
+}
+.nav__links a {
+  color: var(--ink-soft);
+  padding: 4px 0;
+  transition: color 0.2s var(--ease);
+}
+.nav__links a:hover { color: var(--vermillion); }
+
+.nav__search {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.nav__search:hover { color: var(--vermillion); border-color: var(--vermillion); }
+
+/* ---------- Hero 首屏主视觉 ---------- */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+.hero__text {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  padding-inline: var(--sp-3);
+  transform: translateY(-14vh); /* 文字整体上移，给底部插画留出空间 */
+}
+
+.hero__eyebrow {
+  font-size: 0.85rem;
+  letter-spacing: 0.35em;
+  color: var(--brown);
+  text-transform: uppercase;
+}
+
+.hero__title {
+  font-size: clamp(3.25rem, 10vw, 6.5rem);
+  letter-spacing: 0.12em;
+  color: var(--ink);
+}
+
+.hero__slogan {
+  font-family: var(--font-serif);
+  font-size: clamp(1rem, 2.4vw, 1.35rem);
+  color: var(--ink-soft);
+  line-height: 1.9;
+}
+
+.hero__cta {
+  margin-top: var(--sp-2);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 14px 36px;
+  background: var(--vermillion);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  box-shadow: 0 8px 20px rgba(192, 58, 43, 0.28);
+  transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
+}
+.hero__cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(192, 58, 43, 0.36);
+}
+.hero__cta span { display: inline-block; transition: transform 0.25s var(--ease); }
+.hero__cta:hover span { transform: translateX(4px); }
+
+/* Hero 底部手绘剪影插画（占满宽度，贴底） */
+.hero__art {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 62%;
+  pointer-events: none;
+}
+.hero__art svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ---------- 页脚 ---------- */
+.footer {
+  background: var(--ink);
+  color: rgba(246, 241, 231, 0.75);
+  text-align: center;
+  padding: var(--sp-6) var(--sp-3);
+}
+.footer__brand {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  letter-spacing: 0.1em;
+  color: var(--bg);
+}
+.footer__slogan { margin-top: var(--sp-1); color: var(--gold); }
+.footer__note { margin-top: var(--sp-4); font-size: 0.8rem; opacity: 0.6; }
+
+/* ---------- 响应式（桌面端为主，先做基础移动端兜底） ---------- */
+@media (max-width: 720px) {
+  .nav__links { display: none; } /* 移动端导航项先隐藏，汉堡菜单后续阶段再做 */
+  .nav { gap: var(--sp-2); }
+}

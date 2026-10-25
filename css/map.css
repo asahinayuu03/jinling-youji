@@ -1,0 +1,148 @@
+/* ============================================================
+   金陵有迹 — 地图区样式：地图画布、地点标记、详情卡片
+   ============================================================ */
+
+/* ---------- 地图区整体 ---------- */
+.map__layout {
+  display: grid;
+  grid-template-columns: 1fr 360px; /* 桌面：左地图，右卡片 */
+  gap: var(--sp-4);
+  margin-top: var(--sp-5);
+  align-items: start;
+}
+
+/* ---------- 地图画布 ---------- */
+.map__canvas {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.map-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 地图上的地理标注（玄武湖、紫金山等） */
+.map-label {
+  fill: rgba(34, 49, 78, 0.4);
+  font-family: var(--font-serif);
+  font-size: 13px;
+  letter-spacing: 0.2em;
+}
+
+/* ---------- 地点标记 ---------- */
+.marker { cursor: pointer; }
+
+.marker__dot {
+  fill: var(--vermillion);
+  stroke: #fff;
+  stroke-width: 2;
+  transition: transform 0.2s var(--ease);
+  transform-origin: center;
+  transform-box: fill-box;
+}
+.marker:hover .marker__dot { transform: scale(1.35); }
+
+.marker__halo {
+  fill: var(--vermillion);
+  opacity: 0;
+  transition: opacity 0.2s var(--ease);
+}
+.marker.is-active .marker__halo { opacity: 0.16; }
+.marker.is-active .marker__dot { stroke: var(--gold); stroke-width: 2.5; }
+
+.marker__label {
+  fill: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  pointer-events: none; /* 标签不挡住点击 */
+}
+.marker.is-active .marker__label { fill: var(--vermillion); }
+
+/* ---------- 详情卡片 ---------- */
+.map__detail {
+  position: sticky;
+  top: 88px; /* 避开固定导航的高度 */
+}
+
+.detail__empty {
+  background: var(--bg-card);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  padding: var(--sp-6) var(--sp-4);
+  text-align: center;
+  color: var(--brown);
+}
+.detail__empty-icon { font-size: 2rem; margin-bottom: var(--sp-2); }
+
+.detail__card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+/* 占位图：第一版先用分类渐变色 + 地点名，后续替换为版权合规图片 */
+.detail__media {
+  aspect-ratio: 16 / 10;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-serif);
+  font-size: 1.75rem;
+  letter-spacing: 0.1em;
+  color: rgba(246, 241, 231, 0.92);
+}
+.detail__media[data-category="城墙遗址"] { background: linear-gradient(135deg, #22314E, #3A4A6B); }
+.detail__media[data-category="历史街区"] { background: linear-gradient(135deg, #6B5B3A, #8B7355); }
+.detail__media[data-category="文化古迹"] { background: linear-gradient(135deg, #5A2E2A, #8B3A2B); }
+.detail__media[data-category="人文景观"] { background: linear-gradient(135deg, #2E4A5A, #4A6A7A); }
+
+.detail__body { padding: var(--sp-4); }
+
+.detail__category {
+  display: inline-block;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  color: var(--vermillion);
+  border: 1px solid var(--vermillion);
+  border-radius: 999px;
+  padding: 2px 12px;
+}
+
+.detail__name {
+  font-size: 1.6rem;
+  letter-spacing: 0.06em;
+  margin-top: var(--sp-2);
+}
+
+.detail__brief {
+  margin-top: var(--sp-1);
+  color: var(--brown);
+  font-size: 0.95rem;
+}
+
+.detail__story {
+  margin-top: var(--sp-3);
+  font-size: 0.95rem;
+  line-height: 1.8;
+  border-top: 1px solid var(--line);
+  padding-top: var(--sp-3);
+}
+
+.detail__note {
+  margin-top: var(--sp-3);
+  font-size: 0.75rem;
+  color: var(--brown);
+  opacity: 0.8;
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 900px) {
+  .map__layout { grid-template-columns: 1fr; }
+  .map__detail { position: static; }
+}
