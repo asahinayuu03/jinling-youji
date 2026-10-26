@@ -1,14 +1,10 @@
 /* ============================================================
-   金陵有迹 — 地图区样式：地图画布、地点标记、详情卡片
+   金陵有迹 — 地图区样式：地图画布、地点标记、主题筛选器
    ============================================================ */
 
 /* ---------- 地图区整体 ---------- */
 .map__layout {
-  display: grid;
-  grid-template-columns: 1fr 360px; /* 桌面：左地图，右卡片 */
-  gap: var(--sp-4);
   margin-top: var(--sp-5);
-  align-items: start;
 }
 
 /* ---------- 地图画布 ---------- */
@@ -18,6 +14,8 @@
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   overflow: hidden;
+  max-width: 840px;      /* 收窄地图，一屏即可看全 */
+  margin-inline: auto;
 }
 
 .map-svg {
@@ -35,7 +33,11 @@
 }
 
 /* ---------- 地点标记 ---------- */
-.marker { cursor: pointer; }
+.marker { cursor: pointer; transition: opacity 0.3s var(--ease); }
+.marker.is-dimmed { opacity: 0.2; }
+.marker.is-lit .marker__dot { transform: scale(1.45); }
+.marker.is-lit .marker__halo { opacity: 0.22; }
+.marker.is-lit .marker__label { font-weight: 700; }
 
 .marker__dot {
   fill: var(--vermillion);
@@ -52,6 +54,15 @@
   opacity: 0;
   transition: opacity 0.2s var(--ease);
 }
+/* 标记按主题上色 */
+.marker[data-theme="城"] .marker__dot { fill: #22314E; }
+.marker[data-theme="城"] .marker__halo { fill: #22314E; }
+.marker[data-theme="街"] .marker__dot { fill: #8B7355; }
+.marker[data-theme="街"] .marker__halo { fill: #8B7355; }
+.marker[data-theme="文"] .marker__dot { fill: #C03A2B; }
+.marker[data-theme="文"] .marker__halo { fill: #C03A2B; }
+.marker[data-theme="东大"] .marker__dot { fill: #3A7D5C; }
+.marker[data-theme="东大"] .marker__halo { fill: #3A7D5C; }
 .marker.is-active .marker__halo { opacity: 0.16; }
 .marker.is-active .marker__dot { stroke: var(--gold); stroke-width: 2.5; }
 
@@ -63,86 +74,68 @@
 }
 .marker.is-active .marker__label { fill: var(--vermillion); }
 
-/* ---------- 详情卡片 ---------- */
-.map__detail {
-  position: sticky;
-  top: 88px; /* 避开固定导航的高度 */
+.marker__hit {
+  fill: transparent;
+  pointer-events: all; /* 扩大可点击区域，移动端更容易点中 */
 }
 
-.detail__empty {
-  background: var(--bg-card);
-  border: 1px dashed var(--line);
-  border-radius: var(--radius);
-  padding: var(--sp-6) var(--sp-4);
-  text-align: center;
-  color: var(--brown);
+/* ---------- 地图图例 ---------- */
+.map__legend {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin-top: var(--sp-3);
+  font-size: 0.85rem;
+  color: var(--ink-soft);
 }
-.detail__empty-icon { font-size: 2rem; margin-bottom: var(--sp-2); }
+.map__legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.map__legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
 
-.detail__card {
+/* ---------- 路线进度条 ---------- */
+.route-progress {
+  margin-top: var(--sp-3);
   background: var(--bg-card);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
+  padding: var(--sp-2) var(--sp-3);
+}
+.route-progress__info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+.route-progress__name { color: var(--ink); font-weight: 600; }
+.route-progress__count { color: var(--brown); }
+.route-progress__bar {
+  height: 8px;
+  background: rgba(34, 49, 78, 0.08);
+  border-radius: 999px;
   overflow: hidden;
 }
-
-/* 占位图：第一版先用分类渐变色 + 地点名，后续替换为版权合规图片 */
-.detail__media {
-  aspect-ratio: 16 / 10;
-  display: grid;
-  place-items: center;
-  font-family: var(--font-serif);
-  font-size: 1.75rem;
-  letter-spacing: 0.1em;
-  color: rgba(246, 241, 231, 0.92);
-}
-.detail__media[data-category="城墙遗址"] { background: linear-gradient(135deg, #22314E, #3A4A6B); }
-.detail__media[data-category="历史街区"] { background: linear-gradient(135deg, #6B5B3A, #8B7355); }
-.detail__media[data-category="文化古迹"] { background: linear-gradient(135deg, #5A2E2A, #8B3A2B); }
-.detail__media[data-category="人文景观"] { background: linear-gradient(135deg, #2E4A5A, #4A6A7A); }
-
-.detail__body { padding: var(--sp-4); }
-
-.detail__category {
-  display: inline-block;
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
-  color: var(--vermillion);
-  border: 1px solid var(--vermillion);
+.route-progress__fill {
+  height: 100%;
+  width: 0;
+  background: var(--vermillion);
   border-radius: 999px;
-  padding: 2px 12px;
-}
-
-.detail__name {
-  font-size: 1.6rem;
-  letter-spacing: 0.06em;
-  margin-top: var(--sp-2);
-}
-
-.detail__brief {
-  margin-top: var(--sp-1);
-  color: var(--brown);
-  font-size: 0.95rem;
-}
-
-.detail__story {
-  margin-top: var(--sp-3);
-  font-size: 0.95rem;
-  line-height: 1.8;
-  border-top: 1px solid var(--line);
-  padding-top: var(--sp-3);
-}
-
-.detail__note {
-  margin-top: var(--sp-3);
-  font-size: 0.75rem;
-  color: var(--brown);
-  opacity: 0.8;
+  transition: width 0.3s var(--ease);
 }
 
 /* ---------- 响应式 ---------- */
 @media (max-width: 900px) {
-  .map__layout { grid-template-columns: 1fr; }
-  .map__detail { position: static; }
+  .map__layout { margin-top: var(--sp-4); }
+}
+
+/* 移动端：地图完整显示，标记文字/点击区适当放大保证可用 */
+@media (max-width: 720px) {
+  .marker__label { font-size: 20px; }
+  .marker__dot { r: 11px; }
+  .marker__hit { r: 26px; }
 }

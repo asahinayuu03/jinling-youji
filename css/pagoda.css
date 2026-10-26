@@ -1,0 +1,64 @@
+/* ============================================================
+   金陵有迹 — 大报恩寺 · 琉璃塔（3D 页面骨架）
+   当前为占位页面，3D 建模后续接入 WebGL / Three.js
+   ============================================================ */
+
+.viewer3d {
+  position: relative;
+  margin-top: var(--sp-5);
+  aspect-ratio: 16 / 9;
+  background: radial-gradient(circle at 50% 30%, #1F2A40, #12182A);
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.viewer3d__sketch {
+  position: absolute;
+  width: 62%;
+  height: auto;
+  opacity: 0.9;
+}
+
+.viewer3d__placeholder {
+  position: relative;
+  text-align: center;
+  color: rgba(246, 241, 231, 0.9);
+}
+.viewer3d__tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  padding: 3px 14px;
+}
+.viewer3d__text {
+  margin-top: var(--sp-3);
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  letter-spacing: 0.1em;
+}
+.viewer3d__hint {
+  margin-top: var(--sp-2);
+  font-size: 0.85rem;
+  color: rgba(246, 241, 231, 0.6);
+  letter-spacing: 0.15em;
+}
+
+.pagoda-intro {
+  max-width: 720px;
+  margin: var(--sp-4) auto 0;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  line-height: 1.9;
+}
+.pagoda-intro__note {
+  margin-top: var(--sp-3);
+  font-size: 0.8rem;
+  color: var(--brown);
+  opacity: 0.85;
+}

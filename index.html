@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/layout.css" />
   <link rel="stylesheet" href="css/map.css" />
+  <link rel="stylesheet" href="css/detail.css" />
+  <link rel="stylesheet" href="css/pagoda.css" />
 </head>
 <body>
 
@@ -17,13 +19,16 @@
       <span class="nav__brand-mark">迹</span>
       <span>金陵有迹</span>
     </a>
-    <nav class="nav__links" aria-label="主导航">
+    <nav class="nav__links" id="navLinks" aria-label="主导航">
       <a href="#home">首页</a>
+      <a href="#themes">主题浏览</a>
       <a href="#map">地图探索</a>
-      <a href="#stories">文化故事</a>
-      <a href="#past">过去与现在</a>
-      <a href="#explore">探索任务</a>
+      <a href="#routes">路线探索</a>
+      <a href="#pagoda">大报恩寺</a>
     </nav>
+    <button class="nav__toggle" id="navToggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
     <button class="nav__search" type="button" aria-label="搜索">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
         <circle cx="11" cy="11" r="7"></circle>
@@ -38,7 +43,7 @@
       <p class="hero__eyebrow">南京城市文化交互地图</p>
       <h1 class="hero__title">金陵有迹</h1>
       <p class="hero__slogan">一座城，半部历史。<br />在这里，遇见南京的过去与现在。</p>
-      <a class="hero__cta" href="#map">开启探索 <span>→</span></a>
+      <a class="hero__cta" href="#themes">开启探索 <span>→</span></a>
     </div>
 
     <!-- 手绘剪影插画：远山 · 月亮 · 现代天际线 · 传统飞檐 · 秦淮河 · 城墙 -->
@@ -103,97 +108,203 @@
     </div>
   </section>
 
+  <!-- ======================= 主题浏览 ======================= -->
+  <section class="section" id="themes">
+    <div class="container">
+      <h2 class="section__title">选择主题</h2>
+      <p class="section__lead">从城、街、文出发，或跟随一条路线，开始探索金陵。</p>
+
+      <div class="theme-grid">
+        <button class="theme-card" data-theme="城" type="button">
+          <span class="theme-card__mark">城</span>
+          <h3 class="theme-card__name">城</h3>
+          <p class="theme-card__desc">城墙、城门、城市格局与历史遗迹</p>
+          <span class="theme-card__count"></span>
+        </button>
+        <button class="theme-card" data-theme="街" type="button">
+          <span class="theme-card__mark">街</span>
+          <h3 class="theme-card__name">街</h3>
+          <p class="theme-card__desc">传统街区、历史街巷、建筑风貌与城市生活</p>
+          <span class="theme-card__count"></span>
+        </button>
+        <button class="theme-card" data-theme="文" type="button">
+          <span class="theme-card__mark">文</span>
+          <h3 class="theme-card__name">文</h3>
+          <p class="theme-card__desc">博物馆、历史文化场馆、文物与非遗</p>
+          <span class="theme-card__count"></span>
+        </button>
+        <button class="theme-card" data-theme="东大" type="button">
+          <span class="theme-card__mark">校</span>
+          <h3 class="theme-card__name">东南大学</h3>
+          <p class="theme-card__desc">特色探索 · 国立中央大学旧址与校园记忆</p>
+          <span class="theme-card__count"></span>
+        </button>
+      </div>
+
+      <div class="route-entry">
+        <a class="route-entry__link" href="#routes">
+          <span>路线探索</span>
+          <span>沿一条路线，连续探索南京 →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- ======================= 文化地图 ======================= -->
   <section class="section" id="map">
     <div class="container">
-      <h2 class="section__title">文化地图</h2>
-      <p class="section__lead">点击地图上的标记，探索金陵的过去与现在。</p>
+      <div class="route-progress" id="routeProgress" hidden>
+        <div class="route-progress__info">
+          <span class="route-progress__name" id="rpName"></span>
+          <span class="route-progress__count" id="rpCount"></span>
+        </div>
+        <div class="route-progress__bar">
+          <div class="route-progress__fill" id="rpFill"></div>
+        </div>
+      </div>
 
       <div class="map__layout">
         <!-- 手绘地图：底图为静态 SVG，标记由 js/map.js 生成 -->
         <div class="map__canvas">
-          <svg class="map-svg" id="mapSvg" viewBox="0 0 900 700" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="手绘南京文化地图">
-            <!-- 长江（城西） -->
-            <path d="M 88 0 C 70 200, 112 450, 80 700 L 132 700 C 152 450, 122 200, 142 0 Z"
-                  fill="rgba(90,130,170,0.14)" />
+          <svg class="map-svg" id="mapSvg" viewBox="0 0 900 700" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="水墨手绘南京文化地图">
+            <defs>
+              <!-- 墨晕滤镜：模拟水墨在宣纸上晕开 -->
+              <filter id="inkBlur" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="8" />
+              </filter>
+              <filter id="inkBlurSoft" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="16" />
+              </filter>
+            </defs>
 
-            <!-- 紫金山（城东郊） -->
-            <path d="M 662 332 C 685 252, 725 205, 765 150 C 795 195, 828 225, 852 300 L 852 345 L 662 345 Z"
-                  fill="rgba(34,49,78,0.10)" />
+            <!-- 宣纸底色 -->
+            <rect width="900" height="700" fill="#FCF9F2" />
 
-            <!-- 玄武湖（城北） -->
-            <path d="M 445 205 C 462 132, 522 92, 582 112 C 622 127, 622 172, 600 202 C 572 226, 478 222, 445 205 Z"
-                  fill="rgba(90,130,170,0.18)" />
+            <!-- 紫金山（城东郊）：水墨晕染远山 + 皴擦 -->
+            <g filter="url(#inkBlurSoft)" fill="#22314E" opacity="0.13">
+              <path d="M 662 340 C 690 300, 722 262, 752 200 C 775 248, 800 260, 824 310 C 840 296, 854 302, 862 326 L 862 345 L 662 345 Z" />
+            </g>
+            <g filter="url(#inkBlur)" fill="#22314E" opacity="0.12">
+              <path d="M 668 342 C 698 308, 730 272, 760 212 C 782 256, 806 268, 828 316 C 844 304, 856 308, 862 330 L 862 345 L 668 345 Z" />
+            </g>
+            <g fill="none" stroke="#22314E" stroke-width="1.2" opacity="0.20" stroke-linecap="round">
+              <path d="M 700 340 q -8 -30 20 -62" />
+              <path d="M 746 332 q -10 -42 10 -84" />
+              <path d="M 792 336 q -6 -32 8 -58" />
+            </g>
 
-            <!-- 秦淮河 -->
-            <path d="M 622 562 C 570 546, 505 505, 455 482 C 405 458, 322 425, 282 382"
-                  fill="none" stroke="rgba(90,130,170,0.35)" stroke-width="15" stroke-linecap="round" />
+            <!-- 长江（城西）：宽阔墨晕，竖排标注 -->
+            <g filter="url(#inkBlurSoft)" fill="none" stroke="#5A82AA" opacity="0.18">
+              <path d="M 96 0 C 78 180, 120 400, 88 700" stroke-width="58" stroke-linecap="round" />
+            </g>
+            <g filter="url(#inkBlur)" fill="none" stroke="#5A82AA" opacity="0.30">
+              <path d="M 100 0 C 82 180, 122 400, 92 700" stroke-width="40" stroke-linecap="round" />
+            </g>
+            <text class="map-label" x="46" y="360" transform="rotate(-90 46 360)">长江</text>
 
-            <!-- 城墙轮廓 -->
-            <path d="M 250 260 L 430 210 L 560 230 L 650 320 L 600 500 L 420 580 L 300 520 L 250 400 Z"
-                  fill="rgba(34,49,78,0.03)" stroke="#22314E" stroke-width="3.5" stroke-linejoin="round" />
+            <!-- 玄武湖（城北）：墨晕湖面 -->
+            <g filter="url(#inkBlurSoft)" fill="#5A82AA" opacity="0.15">
+              <path d="M 445 205 C 462 132, 522 92, 582 112 C 622 127, 622 172, 600 202 C 572 226, 478 222, 445 205 Z" />
+            </g>
+            <g filter="url(#inkBlur)" fill="none" stroke="#5A82AA" opacity="0.22">
+              <path d="M 445 205 C 462 132, 522 92, 582 112 C 622 127, 622 172, 600 202 C 572 226, 478 222, 445 205 Z" stroke-width="2.5" />
+            </g>
+            <text class="map-label" x="510" y="160">玄武湖</text>
 
-            <!-- 主要道路 -->
-            <g fill="none" stroke="rgba(34,49,78,0.25)" stroke-width="1.5" stroke-dasharray="6 6">
+            <!-- 秦淮河（城南）：流动的墨线 -->
+            <g filter="url(#inkBlur)" fill="none" stroke="#5A82AA" opacity="0.4" stroke-linecap="round">
+              <path d="M 622 562 C 570 546, 505 505, 455 482 C 405 458, 322 425, 282 382" stroke-width="15" />
+            </g>
+            <text class="map-label" x="360" y="470">秦淮河</text>
+
+            <!-- 城墙：水墨飞白，双线错位 -->
+            <g fill="none" stroke="#22314E" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M 250 260 L 430 210 L 560 230 L 650 320 L 600 500 L 420 580 L 300 520 L 250 400 Z"
+                    fill="rgba(34,49,78,0.02)" stroke-width="4" opacity="0.5" />
+              <path d="M 250 262 L 430 212 L 560 232 L 650 322 L 600 502 L 420 582 L 300 522 L 250 402 Z"
+                    stroke-width="1.4" opacity="0.2" />
+            </g>
+
+            <!-- 道路：淡墨虚线 -->
+            <g fill="none" stroke="#22314E" opacity="0.14" stroke-width="1.5" stroke-dasharray="7 7" stroke-linecap="round">
               <path d="M 648 318 L 540 360 L 430 420" />
               <path d="M 460 400 L 420 580" />
               <path d="M 250 340 L 650 340" />
             </g>
 
+            <!-- 秦淮小舟点缀 -->
+            <g opacity="0.5">
+              <path d="M 470 470 q 14 14 30 0 l -4 8 q -12 8 -24 0 Z" fill="#22314E" />
+              <line x1="485" y1="470" x2="485" y2="458" stroke="#22314E" stroke-width="1.5" />
+            </g>
+
             <!-- 地理标注 -->
-            <text class="map-label" x="510" y="160">玄武湖</text>
             <text class="map-label" x="742" y="220">紫金山</text>
-            <text class="map-label" x="360" y="470">秦淮河</text>
-            <text class="map-label" x="84" y="360">长江</text>
+            <text class="map-label" x="405" y="210">明城墙</text>
+            <text class="map-label" x="295" y="455">莫愁湖</text>
+            <text class="map-label" x="430" y="655">雨花台</text>
+
+            <!-- 朱红印章 -->
+            <g transform="translate(716 578)">
+              <rect x="0" y="0" width="44" height="44" rx="4" fill="#C03A2B" opacity="0.86" />
+              <text x="22" y="19" text-anchor="middle" fill="#FCF9F2" font-family="STSong, SimSun, serif" font-size="13" letter-spacing="1">金陵</text>
+              <text x="22" y="36" text-anchor="middle" fill="#FCF9F2" font-family="STSong, SimSun, serif" font-size="13" letter-spacing="1">有迹</text>
+            </g>
 
             <!-- 地点标记层（由 js/map.js 动态生成） -->
             <g id="markers"></g>
           </svg>
         </div>
 
-        <!-- 地点详情卡片 -->
-        <aside class="map__detail">
-          <div class="detail__empty" id="detailEmpty">
-            <div class="detail__empty-icon">🗺</div>
-            <p>点击地图上的标记<br />查看地点详情</p>
-          </div>
+      </div>
 
-          <article class="detail__card" id="detailCard" hidden>
-            <div class="detail__media" id="detailMedia"></div>
-            <div class="detail__body">
-              <span class="detail__category" id="detailCategory"></span>
-              <h3 class="detail__name" id="detailName"></h3>
-              <p class="detail__brief" id="detailBrief"></p>
-              <p class="detail__story" id="detailStory"></p>
-              <p class="detail__note">※ 历史文字为初稿，正式参赛前需核实来源</p>
-            </div>
-          </article>
-        </aside>
+      <div class="map__legend">
+        <span class="map__legend-item"><i class="map__legend-dot" style="background:#22314E"></i>城</span>
+        <span class="map__legend-item"><i class="map__legend-dot" style="background:#8B7355"></i>街</span>
+        <span class="map__legend-item"><i class="map__legend-dot" style="background:#C03A2B"></i>文</span>
+        <span class="map__legend-item"><i class="map__legend-dot" style="background:#3A7D5C"></i>东南大学</span>
       </div>
     </div>
   </section>
 
-  <!-- ======================= 文化故事（占位） ======================= -->
-  <section class="section" id="stories">
+  <!-- ======================= 探索路线 ======================= -->
+  <section class="section" id="routes">
     <div class="container">
-      <h2 class="section__title">文化故事</h2>
-      <p class="section__lead">地点故事将在后续阶段实现。</p>
+      <h2 class="section__title">探索路线</h2>
+      <p class="section__lead">选择一条路线，沿特定主题连续探索，完成打卡、收集印记。</p>
+      <div class="route-list" id="routeList"></div>
     </div>
   </section>
 
-  <!-- ======================= 过去与现在（占位） ======================= -->
-  <section class="section" id="past">
+  <!-- ======================= 大报恩寺 · 琉璃塔（3D 页面骨架） ======================= -->
+  <section class="section" id="pagoda">
     <div class="container">
-      <h2 class="section__title">过去与现在</h2>
-      <p class="section__lead">今昔对照将在后续阶段实现。</p>
-    </div>
-  </section>
+      <h2 class="section__title">大报恩寺 · 琉璃塔</h2>
+      <p class="section__lead">最终探索成就：点亮消失的琉璃塔。</p>
 
-  <!-- ======================= 探索任务（占位） ======================= -->
-  <section class="section" id="explore">
-    <div class="container">
-      <h2 class="section__title">探索任务</h2>
-      <p class="section__lead">探索路线将在后续阶段实现。</p>
+      <div class="viewer3d">
+        <!-- 3D 模型占位区（未建模，后续接入 WebGL/Three.js） -->
+        <svg class="viewer3d__sketch" viewBox="0 0 400 400" aria-hidden="true">
+          <path d="M200 40 L120 340 L280 340 Z" fill="none" stroke="rgba(198,161,91,0.6)" stroke-width="2" />
+          <line x1="200" y1="40" x2="200" y2="340" stroke="rgba(198,161,91,0.3)" stroke-width="1" />
+          <line x1="80" y1="340" x2="320" y2="340" stroke="rgba(198,161,91,0.6)" stroke-width="2" />
+          <g fill="rgba(198,161,91,0.25)">
+            <rect x="156" y="262" width="88" height="58" />
+            <rect x="166" y="184" width="68" height="58" />
+            <rect x="176" y="106" width="48" height="58" />
+          </g>
+        </svg>
+        <div class="viewer3d__placeholder">
+          <p class="viewer3d__tag">待建模 · 3D 重建</p>
+          <p class="viewer3d__text">琉璃塔 3D 模型将在此展示</p>
+          <p class="viewer3d__hint">支持 旋转 · 缩放 · 点亮</p>
+        </div>
+      </div>
+
+      <div class="pagoda-intro">
+        <p>大报恩寺位于南京城南，明成祖永乐年间为纪念先人而建，寺内的琉璃塔被誉为「中世纪世界七大奇观」之一，后毁于战火，仅存塔基。2008 年考古发现地宫，今为遗址公园，以新建玻璃塔遥望古塔记忆。</p>
+        <p class="pagoda-intro__note">※ 简介为初稿，正式参赛前需逐条核实史料来源与图片版权；3D 模型尚未建模，此处为页面骨架。</p>
+      </div>
     </div>
   </section>
 
@@ -203,6 +314,57 @@
     <p class="footer__slogan">一座城，半部历史</p>
     <p class="footer__note">© 2026 金陵有迹 · 大学生设计竞赛作品（原型）</p>
   </footer>
+
+  <!-- ======================= 地点详情浮层 ======================= -->
+  <div class="detail-overlay" id="detailOverlay" hidden>
+    <div class="detail-page" role="dialog" aria-modal="true" aria-label="地点详情">
+      <button class="detail-page__close" id="detailClose" type="button" aria-label="关闭">×</button>
+      <div class="detail-page__scroll">
+        <div class="detail-page__media" id="dpMedia"></div>
+        <div class="detail-page__body">
+          <span class="detail-page__category" id="dpCategory"></span>
+          <h2 class="detail-page__name" id="dpName"></h2>
+          <p class="detail-page__brief" id="dpBrief"></p>
+
+          <section class="dp-block">
+            <h3>历史沿革</h3>
+            <p id="dpStory"></p>
+          </section>
+
+          <section class="dp-block">
+            <h3>建筑特色</h3>
+            <p id="dpFeature"></p>
+          </section>
+
+          <section class="dp-block">
+            <h3>穿越时光</h3>
+            <div class="compare">
+              <div class="compare__img compare__img--after">当代景观 · 待补充</div>
+              <div class="compare__img compare__img--before" id="compareBeforeImg">历史影像 · 待补充</div>
+              <span class="compare__tag compare__tag--before">历史</span>
+              <span class="compare__tag compare__tag--after">当代</span>
+              <input class="compare__range" id="compareRange" type="range" min="0" max="100" value="50" aria-label="拖动对比历史与现在" />
+              <div class="compare__handle" id="compareHandle"></div>
+            </div>
+            <p class="dp-change" id="dpChange"></p>
+          </section>
+
+          <section class="dp-block">
+            <h3>相关人物与事件</h3>
+            <p id="dpPeople"></p>
+          </section>
+
+          <section class="dp-block">
+            <h3>资料来源</h3>
+            <p class="dp-source">待补充 · 正式参赛前需逐条标注史料出处、图片年代与版权</p>
+          </section>
+
+          <button class="dp-checkin" id="dpCheckin" type="button">打卡 · 获取印记</button>
+          <p class="detail-page__note">※ 内容为初稿，正式参赛前需核实史料来源与图片版权</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="js/data.js"></script>
   <script src="js/map.js"></script>

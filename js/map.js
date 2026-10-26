@@ -1,6 +1,7 @@
 /* ============================================================
    金陵有迹 — 地图标记渲染
    读取 data.js 里的地点，在地图 SVG 上生成标记（圆点 + 标签）
+   每个标记带 data-theme，供主题筛选使用
    ============================================================ */
 
 (function () {
@@ -15,6 +16,7 @@
     var g = document.createElementNS(NS, 'g');
     g.setAttribute('class', 'marker');
     g.setAttribute('data-id', p.id);
+    g.setAttribute('data-theme', p.theme);
     g.setAttribute('transform', 'translate(' + p.x + ',' + p.y + ')');
 
     // 选中时的光环
@@ -34,8 +36,14 @@
     label.setAttribute('y', '4');
     label.textContent = p.name;
 
+    // 透明大点击区（移动端手指更容易点中）
+    var hit = document.createElementNS(NS, 'circle');
+    hit.setAttribute('class', 'marker__hit');
+    hit.setAttribute('r', '22');
+
     g.appendChild(halo);
     g.appendChild(dot);
+    g.appendChild(hit);
     g.appendChild(label);
 
     // 点击标记 → 显示详情
